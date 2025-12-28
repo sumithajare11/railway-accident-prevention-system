@@ -111,5 +111,8 @@ Shivaji University, Kolhapur
 
 ---
 
-## 📜 License
-This project is for academic and research purposes.
+## Project Documentation
+
+The detailed research paper for this project is available in the `docs` folder:
+
+[Railway Accident Prevention System Report](docs/report.pdf)
