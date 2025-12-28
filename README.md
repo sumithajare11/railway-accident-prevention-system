@@ -115,4 +115,4 @@ Shivaji University, Kolhapur
 
 The detailed research paper for this project is available in the `docs` folder:
 
-[Railway Accident Prevention System Report](docs/research_paper.pdf)
+[Railway Accident Prevention System Report](docs/research paper.pdf)
