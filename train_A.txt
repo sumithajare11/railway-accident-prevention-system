@@ -1,0 +1,80 @@
+Part 1 : 
+ 
+#include <Wire.h> 
+ #include <LiquidCrystal_I2C.h> 
+ //#include <ESP8266WiFi.h> // For NodeMCU 
+ #include <Servo.h>       // Servo motor library 
+ //#define scl >D1 
+ //#define sda >D2 
+ #define TRIG_PIN D5    // Trigger pin of ultrasonic sensor 
+ #define ECHO_PIN D6    // Echo pin of ultrasonic sensor 
+ #define RELAY_PIN D7   // Relay pin 
+ #define SERVO_PIN_1 D3 // Servo motor 1 pin 
+ #define SERVO_PIN_2 D4 // Servo motor 2 pin 
+ LiquidCrystal_I2C lcd(0x27, 16, 2); // Set the LCD address to 0x27 for a 16x2 display 
+ Servo servo1; // Servo motor 1 object 
+ Servo servo2; // Servo motor 2 object 
+ long duration; 
+ int distance; 
+ int threshold Distance = 10; // Distance threshold in cm for triggering the relay and servos 
+ void setup() 
+ { 
+  lcd.init();                 // Initialize the LCD 
+  lcd.backlight();             // Turn on the LCD backlight 
+  pinMode(TRIG_PIN, OUTPUT);   // Set the trigger pin as output 
+  pinMode(ECHO_PIN, INPUT);    // Set the echo pin as input 
+  pinMode(RELAY_PIN, OUTPUT);  // Set the relay pin as output 
+  digitalWrite(RELAY_PIN, LOW); // Keep the relay off initially 
+  // Attach servos to their pins 
+  servo1.attach(SERVO_PIN_1); 
+  servo2.attach(SERVO_PIN_2); 
+  // Set initial positions for the servos 
+  servo1.write(0);  // Initial position for servo 1 
+  servo2.write(0);  // Initial position for servo 2 
+  lcd.setCursor(0, 0); 
+  lcd.print("Train Monitor"); 
+  delay(3000);                 // Show the startup message for 2 seconds 
+  lcd.clear();
+
+
+ } 
+ void loop()  
+{ 
+  // Send a pulse from the trigger pin 
+  digitalWrite(TRIG_PIN, LOW); 
+  delayMicroseconds(2); 
+  digitalWrite(TRIG_PIN, HIGH); 
+  delayMicroseconds(10); 
+  digitalWrite(TRIG_PIN, LOW); 
+  // Read the duration of the pulse from the echo pin 
+  duration = pulseIn(ECHO_PIN, HIGH); 
+  // Calculate the distance in centimeters 
+  distance = duration * 0.034 / 2; 
+  lcd.set Cursor(0, 0); 
+  lcd.print("Distance: "); 
+  lcd.print(distance); 
+  lcd.print(" cm"); 
+  if (distance <= threshold Distance && distance > 0)  
+{ 
+    // If an object is detected within the threshold distance, turn on the relay and move servos 
+    digitalWrite(RELAY_PIN, HIGH); 
+    lcd.setCursor(0, 1); 
+    lcd.print("Train on Track  "); 
+    // Move both servos to 90 degrees (simulate closing barriers) 
+    servo1.write(120); 
+    servo2.write(120); 
+    delay(3500);  
+  } 
+ else 
+ { 
+    // If no object is detected, turn off the relay and reset servos 
+    digitalWrite(RELAY_PIN, LOW); 
+    lcd.setCursor(0, 1); 
+    lcd.print("No Train      "); 
+    // Move both servos back to 0 degrees (simulate opening barriers) 
+    servo1.write(0); 
+    servo2.write(0); 
+    delay(500); 
+  } 
+  delay(500); // Wait for half a second before measuring again 
+} 
